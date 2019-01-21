@@ -109,3 +109,5 @@ export const SettingsData = [
 ]
 
 export const isLoginUser = "isLoginUser"
+export const userEmail = "userEmail"
+export const userPassword = "userPassword"
