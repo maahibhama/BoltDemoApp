@@ -2,8 +2,7 @@
 
 import { AppRegistry } from 'react-native';
 
-import AppNavigation from './src/Navigation/AppNavigation';
-
+import App from './src/Views/Roots/App';
 import { name as appName } from './app.json';
 
-AppRegistry.registerComponent(appName, () => AppNavigation);
+AppRegistry.registerComponent(appName, () => App);
