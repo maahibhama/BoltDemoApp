@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, TextInput, TouchableHighlight, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, TextInput, TouchableHighlight, AsyncStorage, Keyboard } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import PropTypes from "prop-types";
 import { Icons } from '../../common/Assets';
 import { Color } from '../../common/Colors';
 import BaseNavigationHeader from '../../CustomUI/navigation-header/BaseNavigationHeader';
@@ -8,20 +9,53 @@ import { AppFont } from '../../common/Fonts';
 import Routes from '../../Navigation/Routes';
 import ManageKeyboardScrollView from '../../common/ManageKeyboardScrollView';
 import { isLoginUser } from '../../common/Constants';
+import { loginUser } from '../../API/APIController';
+import { isValidEmail, setCurrentUser } from '../../common/Utility';
+import { User } from '../../Prototypes/User';
 
 export default class LoginView extends Component {
     static navigationOptions = {
         header: null
     }
 
+    static contextTypes = {
+        presentActivityIndicator: PropTypes.func.isRequired,
+        dismissActivityIndicator: PropTypes.func.isRequired,
+        showAlert: PropTypes.func.isRequired
+    };
+
     state = {
-        isShowingPassword: false
+        isShowingPassword: false,
+        email: "",
+        password: ""
     }
 
     logInButtonAction() {
-        AsyncStorage.setItem(isLoginUser, "true").then(()=>{
-            this.props.navigation.navigate(Routes.AppNavigator);
-        })  
+        Keyboard.dismiss()
+        var messageString = ''
+        if (isValidEmail(this.state.email) === false) {
+            messageString = "Plese enter valid email."
+        }
+        else if (this.state.password.length == 0) {
+            messageString = "Please enter password"
+        }
+
+        if (messageString.length > 0) {
+            this.context.showAlert({ title: messageString })
+            return
+        }
+        this.context.presentActivityIndicator()
+        loginUser({ email: this.state.email, password: this.state.password }).then((response) => {
+            this.context.dismissActivityIndicator()
+            if (response.error === null) {
+                User.shared = new User(response.object)
+                setCurrentUser({ email: this.state.email, password: this.state.password }).then(() => {
+                    this.props.navigation.navigate(Routes.AppNavigator);
+                })
+            } else {
+                this.context.showAlert({ title: "Error", message: response.error.message })
+            }
+        })
     }
 
     signUpButtonAction() {

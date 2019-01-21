@@ -1,24 +1,101 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, TextInput, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, TextInput, TouchableHighlight, Keyboard } from 'react-native';
+import PropTypes from "prop-types";
+
 import MenuNavigationHeader from '../../CustomUI/navigation-header/MenuNavigationHeader';
 import LinearGradient from 'react-native-linear-gradient';
 import { Color } from '../../common/Colors';
 import { AppFont } from '../../common/Fonts';
 import ManageKeyboardScrollView from '../../common/ManageKeyboardScrollView';
-
+import { getUserDetails, updateUserDetails } from '../../API/APIController';
+import { User } from '../../Prototypes/User';
+import { isValidEmail } from '../../common/Utility';
+import { NavigationEvents } from 'react-navigation';
 export default class ProfileView extends Component {
     static navigationOptions = {
         header: null
     }
 
-    saveButtonAction() {
+    static contextTypes = {
+        presentActivityIndicator: PropTypes.func.isRequired,
+        dismissActivityIndicator: PropTypes.func.isRequired,
+        showAlert: PropTypes.func.isRequired
+    };
 
+    state = {
+        name: "",
+        email: "",
+        phoneNumber: "",
+        address: "",
+        city: "",
+        gender: ""
+    }
+
+
+    fetchUserDetails() {
+        this.context.presentActivityIndicator()
+        getUserDetails({ id: User.shared.id }).then((response) => {
+            this.context.dismissActivityIndicator()
+            if (response.error === null) {
+                this.setState({
+                    name: response.object.name,
+                    email: response.object.email,
+                    phoneNumber: response.object.phoneNumber,
+                    address: response.object.address,
+                    city: response.object.city,
+                    gender: response.object.gender
+                })
+            }
+
+        })
+    }
+
+    saveButtonAction() {
+        Keyboard.dismiss()
+
+        var messageString = ''
+        if (this.state.name.length == 0) {
+            messageString = "Please enter name"
+        }
+        else if (isValidEmail(this.state.email) === false) {
+            messageString = "Invalid Email Format"
+        }
+
+        if (messageString.length > 0) {
+            this.context.showAlert({ title: messageString })
+            return
+        }
+
+        this.context.presentActivityIndicator()
+        updateUserDetails({
+            id: User.shared.id,
+            name: this.state.name,
+            email: this.state.email,
+            address: this.state.address,
+            city: this.state.city,
+            gender: this.state.gender,
+            phoneNumber: this.state.phoneNumber
+        }).then((response) => {
+            this.context.dismissActivityIndicator()
+            if (response.error === null) {
+                this.setState({
+                    name: response.object.name,
+                    email: response.object.email,
+                    phoneNumber: response.object.phoneNumber,
+                    address: response.object.address,
+                    city: response.object.city,
+                    gender: response.object.gender
+                })
+            }
+
+        })
     }
 
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <MenuNavigationHeader navigation={this.props.navigation} title={"Profile"}/>
+                <NavigationEvents onDidFocus={() => this.fetchUserDetails()} />
+                <MenuNavigationHeader navigation={this.props.navigation} title={"Profile"} />
                 <ManageKeyboardScrollView keyboardShouldPersistTaps={'always'} contentContainerStyle={styles.keyboardAvoidView}>
                     {this.renderMiddleView()}
                 </ManageKeyboardScrollView>
@@ -51,8 +128,9 @@ export default class ProfileView extends Component {
                     returnKeyType={'next'}
                     autoCorrect={false}
                     style={styles.inputViewStyle}
-                    onChangeText={(text) => this.setState({ username: text })}
+                    onChangeText={(text) => this.setState({ name: text })}
                     onSubmitEditing={(event) => { this.refs.addressTextField.focus() }}
+                    value={this.state.name}
                 />
                 <View style={styles.lineView} />
             </View>
@@ -70,8 +148,9 @@ export default class ProfileView extends Component {
                     returnKeyType={'next'}
                     autoCorrect={false}
                     style={styles.inputViewStyle}
-                    onChangeText={(text) => this.setState({ addressLane: text })}
+                    onChangeText={(text) => this.setState({ address: text })}
                     onSubmitEditing={(event) => { this.refs.cityTextField.focus() }}
+                    value={this.state.address}
                 />
                 <View style={styles.lineView} />
             </View>
@@ -91,6 +170,7 @@ export default class ProfileView extends Component {
                     style={styles.inputViewStyle}
                     onChangeText={(text) => this.setState({ city: text })}
                     onSubmitEditing={(event) => { this.refs.genderTextField.focus() }}
+                    value={this.state.city}
                 />
                 <View style={styles.lineView} />
             </View>
@@ -110,6 +190,7 @@ export default class ProfileView extends Component {
                     style={styles.inputViewStyle}
                     onChangeText={(text) => this.setState({ gender: text })}
                     onSubmitEditing={(event) => { this.refs.emailTextField.focus() }}
+                    value={this.state.gender}
                 />
                 <View style={styles.lineView} />
             </View>
@@ -131,6 +212,7 @@ export default class ProfileView extends Component {
                     style={styles.inputViewStyle}
                     onChangeText={(text) => this.setState({ email: text })}
                     onSubmitEditing={(event) => { this.refs.phoneNumberTextField.focus() }}
+                    value={this.state.email}
                 />
                 <View style={styles.lineView} />
             </View>
@@ -152,6 +234,7 @@ export default class ProfileView extends Component {
                     style={styles.inputViewStyle}
                     onChangeText={(text) => this.setState({ phoneNumber: text })}
                     onSubmitEditing={(event) => { this.saveButtonAction() }}
+                    value={this.state.phoneNumber}
                 />
                 <View style={styles.lineView} />
             </View>
