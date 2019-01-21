@@ -25,5 +25,6 @@ export default {
     AddressList: "AddressList",
     Checkout: "Checkout",
     Payment: "Payment",
-    ItemDetails: "ItemDetails"
+    ItemDetails: "ItemDetails",
+    ChangePassword: "ChangePassword"
 }
