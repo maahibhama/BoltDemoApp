@@ -5,6 +5,7 @@ import { Logo } from '../../common/Assets';
 import { Color } from '../../common/Colors';
 import Routes from '../../Navigation/Routes';
 import { isLoginUser } from '../../common/Constants';
+import { getCurrentUser } from '../../common/Utility';
 
 export default class AuthLoadingView extends Component {
   constructor(props) {
@@ -13,8 +14,8 @@ export default class AuthLoadingView extends Component {
   }
 
   fetchData = async () => {
-    AsyncStorage.getItem(isLoginUser).then((value) => {
-      if (value === "true") {
+    getCurrentUser().then(response => {
+      if (response) {
         this.timeoutHandle = setTimeout(() => {
           this.props.navigation.navigate(Routes.AppNavigator);
         }, 1000);
@@ -24,7 +25,6 @@ export default class AuthLoadingView extends Component {
         }, 1000);
       }
     })
-
   };
 
   render() {
