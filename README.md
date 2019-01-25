@@ -5,7 +5,7 @@
 This is react-native application using GraphQL.
 
 ## Screenshots
-![Alt text](https://github.com/maahibhama/BoltDemoApp/blob/master/src/Assets/Screenshots/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202019-01-25%20at%2020.10.03.png "First Screenshot")
+![Alt text](https://github.com/maahibhama/BoltDemoApp/blob/master/src/Assets/Screenshots/screenshot_image.png "First Screenshot")
 
 ## Getting started
 
