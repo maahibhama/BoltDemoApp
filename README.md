@@ -4,6 +4,9 @@
 
 This is react-native application using GraphQL.
 
+## Screenshots
+![Alt text](https://github.com/maahibhama/BoltDemoApp/blob/master/src/Assets/Screenshots/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202019-01-25%20at%2020.10.03.png "First Screenshot")
+
 ## Getting started
 
 1. Clone this repo using `https://github.com/maahibhama/BoltDemoApp.git`
