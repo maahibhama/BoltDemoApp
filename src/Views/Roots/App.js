@@ -5,6 +5,9 @@ import PropTypes from "prop-types";
 import AppNavigation from '../../Navigation/AppNavigation';
 import AppAlert from '../../CustomUI/Alerts/AppAlert';
 import Loader from '../../CustomUI/Loading/Loader';
+import { Sentry } from 'react-native-sentry';
+
+Sentry.config('https://8f016075e6f548c98e7b5f21084662d7@sentry.io/1397359').install();
 
 export default class App extends Component {
 

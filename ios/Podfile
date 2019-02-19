@@ -16,6 +16,8 @@ target 'BoltApp' do
     inherit! :search_paths
     # Pods for testin
 
+    pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
+
   end
 
   target 'BoltAppTests' do
